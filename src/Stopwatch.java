@@ -19,6 +19,7 @@ public class Stopwatch {
     /**
      * Starts the timer
      * @param startSeconds The number of seconds to count-down from
+     * @param t The label for the timer
      */
     public void startTimer(int startSeconds, final JLabel t) {
         this.secondsToCountDown = startSeconds;

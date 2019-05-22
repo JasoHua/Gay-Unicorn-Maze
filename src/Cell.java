@@ -61,6 +61,7 @@ public class Cell {
 
     /**
      * Gets the special property associated with the cell
+     * @return The cell's special value
      */
     public int getSpecial() {
         return this.specialCell;
