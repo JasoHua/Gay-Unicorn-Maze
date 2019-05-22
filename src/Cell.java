@@ -5,223 +5,253 @@ import java.util.LinkedList;
  * Contains 4 walls (initially) and has is connected to 4 other cells in each direction
  */
 public class Cell {
-	
-/* Special List
- * 0 = Nothing
- * 1 = Entrance
- * 2 = Exit
- * 3 = Red coin
- * 4 = Orange coin
- * 5 = Yellow coin
- * 6 = Green coin
- * 7 = Blue coin
- * 8 = Indigo coin
- * 9 = Violet coin
- * 
- * 
- */
-	/**
-	 * @param special The special property associated with the cell
-	 */
-	public Cell(int special) {				
-		this.special = special;
-	}
-	
-	
-	/**
-	 * Puts a special property in the cell
-	 * @param i The special property according to the list
-	 */
-	public void setSpecial(int i) {
-		special = i;
-		if (i >= 3 && i <= 9) {
-			coinCollected = false;
-		}
-	}
-	
-	/**
-	 * Gets the special property associated with the cell
-	 */
-	
-	public int getSpecial() {
-		return special;
-	}
-	
-	/**
-	 * Links this cell to another cell by the right direction
-	 * @param neighbour The cell to link this cell to
-	 */
-	
-	public void linkRight(Cell neighbour) {
-		cRight = neighbour;
-		neighbour.cLeft = this;
-	}
-	
-	/**
-	 * Links this cell to another cell by the up direction
-	 * @param neighbour The cell to link this cell to
-	 */
-	
-	public void linkUp(Cell neighbour) {
-		cUp = neighbour;
-		neighbour.cDown = this;
-	}
-	
-	/**
-	 * Get this cells right neighbour
-	 */
-	public Cell getRight() {
-		return cRight;
-	}
-	
-	/**
-	 * Get this cells left neighbour
-	 */
-	public Cell getLeft() {
-		return cLeft;
-	}
-	
-	/**
-	 * Get this cells down neighbour
-	 */
-	public Cell getDown() {
-		return cDown;
-	}
 
-	/**
-	 * Get this cells up neighbour
-	 */
-	public Cell getUp() {
-		return cUp;
-	}
-	
-	/**
-	 * Open the walls between this cell and a neighbour
-	 * @param neighbour The neighbouring cell (must be a neighbour or nothing happens)
-	 */
-	public void breakWall(Cell neighbour) {
-		if (cRight != null && cRight.equals(neighbour)) {
-			right = true;
-			cRight.left = true;
-		} else if (cLeft != null && cLeft.equals(neighbour)) {
-			left = true;
-			cLeft.right = true;
-		} else if (cUp != null && cUp.equals(neighbour)) {
-			up = true;
-			cUp.down = true;
-		} else if (cDown != null && cDown.equals(neighbour)) {
-			down = true;
-			cDown.up = true;
-		}
-	}
-	
+    /**
+     * Booleans directions represent walls:
+     * false = wall
+     * true = open path
+     */
+    private boolean left = false;
+    private boolean right = false;
+    private boolean up = false;
+    private boolean down = false;
 
-	/**
-	 * Sets this cell as visited (for maze generation)
-	 */
-	public void setVisited() {
-		visited = true;
-	}
-	
-	/**
-	 * Checks if this cell has been visited
-	 */
-	public Boolean isVisited() {
-		return visited;
-	}
-	
-	/**
-	 * Returns the neighbours to this cell which have not been visited as a LinkedList
-	 */
-	public LinkedList<Cell> getUnvisitedNeighbour() {
-		LinkedList<Cell> neighbours = new LinkedList<Cell>();
-		if (cRight != null && !this.cRight.isVisited()) {
-			neighbours.add(cRight);
-		}
-		if (cLeft != null && !this.cLeft.isVisited()) {
-			neighbours.add(cLeft);
-		}
-		if (cDown != null && !this.cDown.isVisited()) {
-			neighbours.add(cDown);
-		}
-		if (cUp != null && !this.cUp.isVisited()) {
-			neighbours.add(cUp);
-		}
-		return neighbours;
-	}
+    private boolean player = false;
+    private boolean coinCollected = true;
+    private boolean visited = false;
 
-	/**
-	 * Check if there is a wall in the UP direction
-	 */
-	public boolean hasWallUp() {
-		return up;
-	}
+    /**
+     * The cell's neighbours
+     */
+    private Cell cellLeft = null;
+    private Cell cellRight = null;
+    private Cell cellUp = null;
+    private Cell cellDown = null;
 
-	/**
-	 * Check if there is a wall in the Right direction
-	 */
-	public boolean hasWallRight() {
-		return right;
-	}
-	
-	/**
-	 * Check if there is a wall in the Left direction
-	 */
-	public boolean hasWallLeft() {
-		return left;
-	}
+    private int specialCell;
 
-	/**
-	 * Check if there is a wall in the Down direction
-	 */
-	public boolean hasWallDown() {
-		return down;
-	}
-	
-	/**
-	 * Marks this cell as having a player on or off of it. True = player on, false = player off
-	 */
-	public void setPlayer(boolean b) {
-		player = b;
-	}
+    /**
+     * Special List
+     * 0 = Nothing
+     * 1 = Entrance
+     * 2 = Exit
+     * 3 = Red coin
+     * 4 = Orange coin
+     * 5 = Yellow coin
+     * 6 = Green coin
+     * 7 = Blue coin
+     * 8 = Indigo coin
+     * 9 = Violet coin
+     * @param special The special property associated with the cell
+     */
+    public Cell(int special) {
+        this.specialCell = special;
+    }
 
-	/**
-	 * Checks if this cell has a player on it, true = Player is on cell
-	 */
-	public boolean hasPlayer() {
-		return player;
-	}
+    /**
+     * Puts a special property in the cell
+     * @param specialCell The special property according to the list
+     */
+    public void setSpecial(int specialCell) {
+        this.specialCell = specialCell;
+        if (specialCell >= 3 && specialCell <= 9) {
+            coinCollected = false;
+        }
+    }
 
-	/**
-	 * Marks the coin in this cell as already collected
-	 */
-	public void setCoinCollected() {
-		coinCollected = true;
-		
-	}
-	
-	/**
-	 * Checks if the coin in this cell is already collected
-	 */
-	public boolean isCoinCollected() {
-		return coinCollected;
-	}
-	
-	
-	//Booleans directions represent walls
-	//false = wall
-	//true = open path
-	private boolean left = false;
-	private boolean right = false;
-	private boolean up = false;
-	private boolean down = false;
-	private boolean player = false;
-	private boolean coinCollected = true;
-	private boolean visited = false;
-	private Cell cLeft = null;
-	private Cell cRight = null;
-	private Cell cUp = null;
-	private Cell cDown = null;
-	private int special;
+    /**
+     * Gets the special property associated with the cell
+     */
+    public int getSpecial() {
+        return this.specialCell;
+    }
+
+    /**
+     * Links this cell to another cell by the right direction
+     * @param neighbourCell The cell to link this cell to
+     */
+    public void linkRight(Cell neighbourCell) {
+        this.cellRight = neighbourCell;
+        neighbourCell.cellLeft = this;
+    }
+
+    /**
+     * Links this cell to another cell by the up direction
+     * @param neighbourCell The cell to link this cell to
+     */
+    public void linkUp(Cell neighbourCell) {
+        this.cellUp = neighbourCell;
+        neighbourCell.cellDown = this;
+    }
+
+    /**
+     * Sets this cell's left neighbour
+     * @param cell The cell the to set as the west neighbour
+     */
+    public void setLeft(Cell cell) {
+        this.cellLeft = cell;
+    }
+
+    /**
+     * Sets this cell's down neighbour
+     * @param cell The cell the to set as the south neighbour
+     */
+    public void setDown(Cell cell) {
+        this.cellDown = cell;
+    }
+
+    /**
+     * Get this cells right neighbour
+     * @return This cell's east neighbour
+     */
+    public Cell getRight() {
+        return this.cellRight;
+    }
+
+    /**
+     * Get this cells left neighbour
+     * @return This cell's west neighbour
+     */
+    public Cell getLeft() {
+        return this.extracted();
+    }
+
+    private Cell extracted() {
+        return cellLeft;
+    }
+
+    /**
+     * Get this cells down neighbour
+     * @return This cell's south neighbour
+     */
+    public Cell getDown() {
+        return this.cellDown;
+    }
+
+    /**
+     * Get this cells up neighbour
+     * @return This cell's north neighbour
+     */
+    public Cell getUp() {
+        return this.cellUp;
+    }
+
+    /**
+     * Open/break the walls between this cell and a neighbour
+     * @param neighbour The neighbouring cell (must be a neighbour or nothing happens)
+     */
+    public void breakWall(Cell neighbour) {
+        if (cellRight != null && cellRight.equals(neighbour)) {
+            right = true;
+            cellRight.left = true;
+        } else if (extracted() != null && extracted().equals(neighbour)) {
+            left = true;
+            extracted().right = true;
+        } else if (cellUp != null && cellUp.equals(neighbour)) {
+            up = true;
+            cellUp.down = true;
+        } else if (cellDown != null && cellDown.equals(neighbour)) {
+            down = true;
+            cellDown.up = true;
+        }
+    }
+
+    /**
+     * Sets this cell as visited (for maze generation)
+     */
+    public void setVisited() {
+        this.visited = true;
+    }
+
+    /**
+     * Checks if this cell has been visited
+     * @return If the cell has been visited
+     */
+    public Boolean isVisited() {
+        return this.visited;
+    }
+
+    /**
+     * Returns the neighbours to this cell which have not been visited as a list
+     * @return The list of unvisited neighbours for this cell
+     */
+    public LinkedList<Cell> getUnvisitedNeighbour() {
+        LinkedList<Cell> neighbours = new LinkedList<Cell>();
+        if (cellRight != null && !this.cellRight.isVisited()) {
+            neighbours.add(cellRight);
+        }
+        if (extracted() != null && !this.extracted().isVisited()) {
+            neighbours.add(extracted());
+        }
+        if (cellDown != null && !this.cellDown.isVisited()) {
+            neighbours.add(cellDown);
+        }
+        if (cellUp != null && !this.cellUp.isVisited()) {
+            neighbours.add(cellUp);
+        }
+        return neighbours;
+    }
+
+    /**
+     * Check if there is a wall in the UP direction
+     * @return True if this cell has a north wall
+     */
+    public boolean hasWallUp() {
+        return this.up;
+    }
+
+    /**
+     * Check if there is a wall in the Right direction
+     * @return True if this cell has a east wall
+     */
+    public boolean hasWallRight() {
+        return this.right;
+    }
+
+    /**
+     * Check if there is a wall in the Left direction
+     * @return True if this cell has a west wall
+     */
+    public boolean hasWallLeft() {
+        return this.left;
+    }
+
+    /**
+     * Check if there is a wall in the Down direction
+     * @return True if this cell has a south wall
+     */
+    public boolean hasWallDown() {
+        return this.down;
+    }
+
+    /**
+     * Set cell if player exists on it. True = player on, false = player off
+     * @param playerExists True if the player exists on this cell
+     */
+    public void setPlayer(boolean playerExists) {
+        this.player = playerExists;
+    }
+
+    /**
+     * Checks if this cell has a player on it
+     * @return True if player is on cell
+     */
+    public boolean hasPlayer() {
+        return this.player;
+    }
+
+    /**
+     * Marks the coin in this cell as already collected
+     */
+    public void setCoinCollected() {
+        this.coinCollected = true;
+    }
+
+    /**
+     * Checks if the coin in this cell is already collected
+     * @return True if the coin in this cell has be collected
+     */
+    public boolean isCoinCollected() {
+        return this.coinCollected;
+    }
 }
-

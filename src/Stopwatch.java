@@ -5,60 +5,58 @@ import java.util.TimerTask;
 import javax.swing.JLabel;
 
 /**
- * The class representing a timer
+ * The class representing a stopwatch timer
  */
-
 public class Stopwatch {
-	
-	/**
-	 * Starts the timer
-	 * @param startSeconds The number of seconds to count-down from
-	 */
-	public void startTimer (int startSeconds,final JLabel t) {
-	    int delay = 1000;
-	    int period = 1000;
-	    timer = new Timer();
-	    interval = startSeconds;
-	    Stopwatch.startSeconds = startSeconds;
-	    timer.scheduleAtFixedRate(new TimerTask() {
-	        public void run() {
-	        	String s = setInterval() + "";
-	            t.setText(s);
-	        }
-	    }, delay, period);
-	}
 
-	private static final int setInterval() {
-	    if (interval == 1){
-	        timer.cancel();
-	    }
-	    interval--;
-	    return interval;
-	}
-	
-	/**
-	 * Restarts the timer
-	 */
-	public void restartTimer(){
-		interval = Stopwatch.startSeconds+1;
-	}
-	
-	/**
-	 * Returns the time remaining
-	 */
-	public int timeRemaining(){
-		return interval;
-	}
-	
-	/**
-	 * Stops the timer
-	 */
-	public void stopTimer(){
-		timer.cancel();
-	}
-	
-	
-	private static int interval;
-	private static Timer timer;
-	private static int startSeconds;
+    private int secondsToCountDown;
+    private Timer timer;
+
+    public Stopwatch() {
+        this.timer = new Timer();
+    }
+
+    /**
+     * Starts the timer
+     * @param startSeconds The number of seconds to count-down from
+     */
+    public void startTimer(int startSeconds, final JLabel t) {
+        this.secondsToCountDown = startSeconds;
+
+        TimerTask timerTask = new TimerTask() {
+            public void run() {
+                String s = setInterval() + "";
+                t.setText(s);
+            }
+        };
+
+        this.timer.scheduleAtFixedRate(timerTask, 1000, 1000);
+    }
+
+    /**
+     * Set the timer interval
+     * @return Seconds to count down
+     */
+    private int setInterval() {
+        if (this.secondsToCountDown == 1){
+            this.timer.cancel();
+        }
+
+        return --this.secondsToCountDown;
+    }
+
+    /**
+     * Returns the time remaining to count down
+     * @return The time remaining
+     */
+    public int timeRemaining() {
+        return this.secondsToCountDown;
+    }
+
+    /**
+     * Stops the timer
+     */
+    public void stopTimer() {
+        this.timer.cancel();
+    }
 }
